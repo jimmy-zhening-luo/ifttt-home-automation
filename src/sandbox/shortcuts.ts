@@ -13,11 +13,6 @@ function formatMoment (_moment: Moment): string {
 const times: Array<TimeStamp<Moment> > = new Array<TimeStamp<Moment> >();
 
 times.push({
-  event: "iOS Shortcut Invoked",
-  time: moment(IosShortcuts.shortcutAutomationStarted.OccurredAt as string) as Moment
-  });
-
-times.push({
   event: "IFTTT Applet Began Running",
   time: Meta.triggerTime as Moment
   });
