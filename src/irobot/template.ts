@@ -1,15 +1,33 @@
-const runIfMoreThanFracHoursSinceLastRun: number = 16.0;
+type Moment = moment.Moment;
 
-// queries
-let lastRunIso: string = Irobot.historyOfRobotStarted[0].Timestamp;
-let lastRunMoment = moment(lastRunIso);
-let now = Meta.currentUserTime;
+interface Config {
+  readonly version: number;
+  readonly [prop: string]: any;
+}
 
-// filter logic
-let timeSinceLastRunInFracHours: number = now.diff(lastRunMoment, 'hour', true);
+const config: Config = {
+  version: 2.0,
+  minHoursSinceLastRun: 16,
+  overrides: {
+    vacation: false
+  }
+};
 
-let doRun: boolean = timeSinceLastRunInFracHours > runIfMoreThanFracHoursSinceLastRun;
+interface LatestRuns<Type> {
+  readonly last: Type;
+  readonly secondLast?: Type;
+  readonly [prop: string]: Type;
+}
 
-if (!doRun) {
-  Irobot.startRobot.skip();
+const runs: LatestRuns<Moment> = {
+  last: moment(Irobot.historyOfRobotStarted[0].Timestamp as string) as Moment
+};
+
+function hoursSince(past: Moment): number {
+  const now: Moment = Meta.triggerTime as Moment;
+  return now.diff(past as Moment, "hour", true) as number;
+}
+
+if (hoursSince(runs.last) < config.minHoursSinceLastRun) {
+  Irobot.cleanByRoom.skip();
 }
