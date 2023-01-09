@@ -1,4 +1,33 @@
+import moment from 'moment';
 type Moment = moment.Moment;
+
+
+interface Timer {
+  readonly Timestamp: string;
+}
+
+class Meta {
+  static get triggerTime(): Moment {
+    return moment("2022") as Moment;
+  }
+}
+class Irobot {
+  static get cleanByRoom(): Irobot {
+    return new this;
+  }
+
+  skip() {
+    // do nothing
+  }
+
+  static get historyOfRobotStarted(): Array<Timer> {
+    return [
+      {
+        Timestamp: String()
+      }
+    ]
+  }
+}
 
 interface Config {
   readonly version: number;
@@ -16,7 +45,7 @@ const config: Config = {
 interface LatestRuns<Type> {
   readonly last: Type;
   readonly secondLast?: Type;
-  readonly [prop: string]: Type;
+  readonly [prop: string]: Type | undefined;
 }
 
 const runs: LatestRuns<Moment> = {
