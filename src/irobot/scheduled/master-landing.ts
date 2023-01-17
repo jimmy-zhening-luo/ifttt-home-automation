@@ -1,33 +1,62 @@
+const config: any = {
+  minAgoLastRunH: 16,
+  runIfQueryFails: false
+};
+
+let success: boolean = false;
 type Moment = moment.Moment;
+const minAgoLastRunM: number = config
+  .minAgoLastRunH * 60;
+const errorM: number = 5;
+const now: Moment = Meta.triggerTime;
+let lastRun: Moment = moment()
+  .subtract(
+    minAgoLastRunM + errorM, "minutes");
 
-interface Config {
-  readonly version: number;
-  readonly [prop: string]: any;
+try {
+  const lastRunString: string = Irobot
+    .historyOfJobComplete[0]
+    .Timestamp;
+  lastRun = moment(lastRunString);
+  success = true;
+}
+catch (e) {
+  success = false;
+  const message: string = "Failed to get time last run. Caught error: " + e;
+  IfNotifications.sendNotification
+    .setMessage(message);
 }
 
-const config: Config = {
-  version: 2.0,
-  minHoursSinceLastRun: 8,
-  overrides: {
-    vacation: false
+if (success === true
+|| config.runIfQueryFails === true
+) {
+  const agoLastRunM: number = now
+    .diff(lastRun, "minutes", true);
+  const agoLastRunH: number = (
+    agoLastRunM / 60);
+  if (agoLastRunM > minAgoLastRunM) {
+    const message: string = String(
+      "Cleaning started. It's been "
+      + agoLastRunH.toString()
+      + " hours since last run, which exceeds the minimum "
+      + config.minAgoLastRunH.toString()
+      + " hours required since last run."
+    );
+    IfNotifications.sendNotification
+      .setMessage(message);
   }
-};
-
-interface LatestRuns<Type> {
-  readonly last: Type;
-  readonly secondLast?: Type;
-  readonly [prop: string]: Type;
-}
-
-const runs: LatestRuns<Moment> = {
-  last: moment(Irobot.historyOfRobotStarted[0].Timestamp as string) as Moment
-};
-
-function hoursSince(past: Moment): number {
-  const now: Moment = Meta.triggerTime as Moment;
-  return now.diff(past as Moment, "hour", true) as number;
-}
-
-if (hoursSince(runs.last) < config.minHoursSinceLastRun) {
-  Irobot.cleanByRoom.skip();
+  else {
+    // Filter Condition Met
+    Irobot.cleanByRoom.skip();
+    // Filter Condition Met
+    const message: string = String(
+      "Cleaning skipped. It's been "
+      + agoLastRunH.toString()
+      + " hours since last run, which is under the minimum "
+      + config.minAgoLastRunH.toString()
+      + " hours required since last run."
+    );
+    IfNotifications.sendNotification
+      .setMessage(message);
+  }
 }
