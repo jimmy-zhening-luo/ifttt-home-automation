@@ -1,0 +1,25 @@
+{
+  "name": "ifttt-home-automation",
+  "version": "2.0.0",
+  "description": "IFTTT Filter Code for iRobot home automation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jimmy-zhening-luo/ifttt-home-automation.git"
+  },
+  "author": "Jimmy Zhening Luo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jimmy-zhening-luo/ifttt-home-automation/issues"
+  },
+  "homepage": "https://github.com/jimmy-zhening-luo/ifttt-home-automation#readme",
+  "devDependencies": {
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "moment": "^2.29.4"
+  }
+}
